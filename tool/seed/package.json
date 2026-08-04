@@ -1,0 +1,11 @@
+{
+  "name": "foodcal-ai-seed-tool",
+  "private": true,
+  "description": "One-off Node script to seed the foods Firestore collection. Not part of the Flutter app build.",
+  "scripts": {
+    "seed": "node seedFoods.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

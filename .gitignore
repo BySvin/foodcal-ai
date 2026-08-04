@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Node (tool/seed's firebase-admin dependency)
+node_modules/
+
 # Firebase — never commit the admin service account key (full DB access,
 # unlike google-services.json/GoogleService-Info.plist which are client
 # config protected by security rules and are fine to commit).

@@ -27,8 +27,23 @@ service cloud.firestore {
       allow read, write: if isOwner(userId);
     }
 
-    // Collections introduced in later milestones (foods, food_logs,
-    // favorites, water_logs, weight_logs) are added here incrementally as
-    // each feature is built, alongside their own rules-unit tests.
+    // foods/{foodId} — shared catalog: seeded entries (isCustom: false,
+    // createdBy: null, written only by the Admin SDK seed script which
+    // bypasses these rules) plus user-submitted custom foods (M5).
+    // Every signed-in user can read the whole catalog; a client can only
+    // ever create/update/delete its OWN custom entries, never a seeded one.
+    match /foods/{foodId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.isCustom == true
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update, delete: if isSignedIn()
+        && resource.data.isCustom == true
+        && resource.data.createdBy == request.auth.uid;
+    }
+
+    // Collections introduced in later milestones (food_logs, favorites,
+    // water_logs, weight_logs) are added here incrementally as each
+    // feature is built, alongside their own rules-unit tests.
   }
 }
