@@ -5,8 +5,8 @@ import 'failure.dart';
 sealed class Result<T> {
   const Result();
 
-  factory Result.success(T value) = Success<T>;
-  factory Result.failure(Failure failure) = Failed<T>;
+  const factory Result.success(T value) = Success<T>;
+  const factory Result.failure(Failure failure) = Failed<T>;
 
   bool get isSuccess => this is Success<T>;
   bool get isFailure => this is Failed<T>;
