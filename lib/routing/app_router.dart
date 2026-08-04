@@ -10,6 +10,11 @@ import '../features/auth/presentation/screens/signup_screen.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/verify_email_screen.dart';
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/food_logging/domain/entities/food_item.dart';
+import '../features/food_logging/domain/entities/food_log_entry.dart';
+import '../features/food_logging/presentation/screens/add_manual_food_screen.dart';
+import '../features/food_logging/presentation/screens/food_quantity_screen.dart';
+import '../features/food_logging/presentation/screens/food_search_screen.dart';
 import '../features/food_logging/presentation/screens/log_screen.dart';
 import '../features/history/presentation/screens/history_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -98,6 +103,40 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePaths.log,
                 builder: (context, state) => const LogScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'search',
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      return FoodSearchScreen(
+                        mealType: extra?['mealType'] as MealType? ?? MealType.breakfast,
+                        date: extra?['date'] as DateTime? ?? DateTime.now(),
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'add-manual',
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      return AddManualFoodScreen(
+                        mealType: extra?['mealType'] as MealType? ?? MealType.breakfast,
+                        date: extra?['date'] as DateTime? ?? DateTime.now(),
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'food/:foodId',
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      return FoodQuantityScreen(
+                        foodId: state.pathParameters['foodId']!,
+                        food: extra?['food'] as FoodItem?,
+                        mealType: extra?['mealType'] as MealType? ?? MealType.breakfast,
+                        date: extra?['date'] as DateTime? ?? DateTime.now(),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

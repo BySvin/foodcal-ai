@@ -5,7 +5,16 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "loggedDate", "order": "ASCENDING" }
+        { "fieldPath": "loggedDate", "order": "ASCENDING" },
+        { "fieldPath": "loggedAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "food_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "loggedAt", "order": "DESCENDING" }
       ]
     },
     {

@@ -42,8 +42,29 @@ service cloud.firestore {
         && resource.data.createdBy == request.auth.uid;
     }
 
-    // Collections introduced in later milestones (food_logs, favorites,
-    // water_logs, weight_logs) are added here incrementally as each
-    // feature is built, alongside their own rules-unit tests.
+    // food_logs/{logId} — owner-only. Random doc id (auto-generated on
+    // create), so ownership is enforced purely via the userId field.
+    match /food_logs/{logId} {
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.calories is number
+        && request.resource.data.calories >= 0
+        && request.resource.data.mealType in ['breakfast', 'lunch', 'dinner', 'snack'];
+      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // favorites/{uid}_{foodId} — owner-only, deterministic doc id enforced
+    // at the rules layer (not just app convention) to prevent a client
+    // from writing another user's favorite under a spoofed id.
+    match /favorites/{favoriteId} {
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && favoriteId == request.auth.uid + '_' + request.resource.data.foodId;
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Collections introduced in later milestones (water_logs, weight_logs)
+    // are added here incrementally as each feature is built, alongside
+    // their own rules-unit tests.
   }
 }

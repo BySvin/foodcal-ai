@@ -6,7 +6,7 @@ import '../../../../core/utils/calorie_calculator.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../providers/onboarding_providers.dart';
 import '../widgets/onboarding_step_scaffold.dart';
-import '../widgets/option_selector.dart';
+import '../../../../core/widgets/option_selector.dart';
 
 const _stepCount = 6;
 
@@ -182,9 +182,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             selected: form.gender,
             onSelected: (g) => ref.read(onboardingControllerProvider.notifier).setGender(g),
             options: const [
-              OnboardingOption(value: Gender.female, label: 'Female'),
-              OnboardingOption(value: Gender.male, label: 'Male'),
-              OnboardingOption(value: Gender.other, label: 'Other'),
+              SelectorOption(value: Gender.female, label: 'Female'),
+              SelectorOption(value: Gender.male, label: 'Male'),
+              SelectorOption(value: Gender.other, label: 'Other'),
             ],
           ),
           if (_stepError != null) _buildError(),
@@ -235,27 +235,27 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             onSelected: (a) =>
                 ref.read(onboardingControllerProvider.notifier).setActivityLevel(a),
             options: const [
-              OnboardingOption(
+              SelectorOption(
                 value: ActivityLevel.sedentary,
                 label: 'Sedentary',
                 description: 'Little or no exercise',
               ),
-              OnboardingOption(
+              SelectorOption(
                 value: ActivityLevel.light,
                 label: 'Lightly active',
                 description: 'Exercise 1-3 days/week',
               ),
-              OnboardingOption(
+              SelectorOption(
                 value: ActivityLevel.moderate,
                 label: 'Moderately active',
                 description: 'Exercise 3-5 days/week',
               ),
-              OnboardingOption(
+              SelectorOption(
                 value: ActivityLevel.active,
                 label: 'Active',
                 description: 'Hard exercise 6-7 days/week',
               ),
-              OnboardingOption(
+              SelectorOption(
                 value: ActivityLevel.veryActive,
                 label: 'Very active',
                 description: 'Very hard exercise & physical job',
@@ -282,9 +282,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             selected: form.goal,
             onSelected: (g) => ref.read(onboardingControllerProvider.notifier).setGoal(g),
             options: const [
-              OnboardingOption(value: Goal.lose, label: 'Lose weight'),
-              OnboardingOption(value: Goal.maintain, label: 'Maintain weight'),
-              OnboardingOption(value: Goal.gain, label: 'Gain weight'),
+              SelectorOption(value: Goal.lose, label: 'Lose weight'),
+              SelectorOption(value: Goal.maintain, label: 'Maintain weight'),
+              SelectorOption(value: Goal.gain, label: 'Gain weight'),
             ],
           ),
           if (_stepError != null) _buildError(),

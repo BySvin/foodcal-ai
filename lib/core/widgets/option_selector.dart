@@ -11,7 +11,7 @@ class OptionSelector<T> extends StatelessWidget {
     required this.onSelected,
   });
 
-  final List<OnboardingOption<T>> options;
+  final List<SelectorOption<T>> options;
   final T? selected;
   final void Function(T) onSelected;
 
@@ -35,8 +35,8 @@ class OptionSelector<T> extends StatelessWidget {
   }
 }
 
-class OnboardingOption<T> {
-  const OnboardingOption({required this.value, required this.label, this.description});
+class SelectorOption<T> {
+  const SelectorOption({required this.value, required this.label, this.description});
 
   final T value;
   final String label;
@@ -51,7 +51,7 @@ class _OptionCard<T> extends StatelessWidget {
     required this.theme,
   });
 
-  final OnboardingOption<T> option;
+  final SelectorOption<T> option;
   final bool isSelected;
   final VoidCallback onTap;
   final ThemeData theme;
