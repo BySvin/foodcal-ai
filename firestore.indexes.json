@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "food_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "loggedDate", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "weight_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "loggedDate", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "foods",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isCustom", "order": "ASCENDING" },
+        { "fieldPath": "createdBy", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
