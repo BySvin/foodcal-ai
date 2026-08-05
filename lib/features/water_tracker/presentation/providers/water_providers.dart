@@ -24,7 +24,7 @@ final waterGoalProvider = Provider<int>((ref) {
 /// A day's water progress. Never null — defaults to zero logged against
 /// the user's current goal when no doc exists yet for that day.
 final dailyWaterProvider = StreamProvider.family<WaterDay, DateTime>((ref, date) {
-  final uid = ref.watch(authRepositoryProvider).currentUid;
+  final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   final dayKey = AppDateUtils.toDayKey(date);
   final goal = ref.watch(waterGoalProvider);
 

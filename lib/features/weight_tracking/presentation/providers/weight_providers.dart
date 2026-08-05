@@ -14,7 +14,7 @@ final weightLogRepositoryProvider = Provider<WeightLogRepository>((ref) {
 
 /// Last 90 days of weight entries, oldest first — chart- and history-ready.
 final weightLogsProvider = StreamProvider<List<WeightEntry>>((ref) {
-  final uid = ref.watch(authRepositoryProvider).currentUid;
+  final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   if (uid == null) return Stream.value(const []);
   return ref.watch(weightLogRepositoryProvider).watchRecent(uid, days: 90);
 });

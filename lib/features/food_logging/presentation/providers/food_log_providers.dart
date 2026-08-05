@@ -25,7 +25,7 @@ final favoriteRepositoryProvider = Provider<FavoriteRepository>((ref) {
 /// All of a user's log entries for a given day, ordered by time logged.
 /// Empty (not an error) when the user is signed out or has no logs yet.
 final dailyFoodLogsProvider = StreamProvider.family<List<FoodLogEntry>, DateTime>((ref, date) {
-  final uid = ref.watch(authRepositoryProvider).currentUid;
+  final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   if (uid == null) return Stream.value(const []);
   return ref.watch(foodLogRepositoryProvider).watchLogsForDate(uid, AppDateUtils.toDayKey(date));
 });
@@ -38,13 +38,13 @@ final dailyNutritionSummaryProvider = Provider.family<NutritionSummary, DateTime
 });
 
 final recentFoodsProvider = StreamProvider<List<FoodLogEntry>>((ref) {
-  final uid = ref.watch(authRepositoryProvider).currentUid;
+  final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   if (uid == null) return Stream.value(const []);
   return ref.watch(foodLogRepositoryProvider).watchRecentFoods(uid);
 });
 
 final favoritesProvider = StreamProvider<List<FavoriteFood>>((ref) {
-  final uid = ref.watch(authRepositoryProvider).currentUid;
+  final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   if (uid == null) return Stream.value(const []);
   return ref.watch(favoriteRepositoryProvider).watchFavorites(uid);
 });

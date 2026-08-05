@@ -20,6 +20,7 @@ import '../features/food_logging/presentation/screens/log_screen.dart';
 import '../features/history/presentation/screens/history_detail_screen.dart';
 import '../features/history/presentation/screens/history_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/profile/presentation/screens/profile_edit_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/weight_tracking/presentation/screens/weight_screen.dart';
 import 'app_shell.dart';
@@ -166,6 +167,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: RoutePaths.profile,
                 builder: (context, state) => const ProfileScreen(),
                 routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => const ProfileEditScreen(),
+                  ),
                   GoRoute(
                     path: 'weight',
                     builder: (context, state) => const WeightScreen(),
