@@ -19,6 +19,7 @@ import '../features/food_logging/presentation/screens/log_screen.dart';
 import '../features/history/presentation/screens/history_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/weight_tracking/presentation/screens/weight_screen.dart';
 import 'app_shell.dart';
 import 'route_paths.dart';
 import 'router_refresh_notifier.dart';
@@ -153,6 +154,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePaths.profile,
                 builder: (context, state) => const ProfileScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'weight',
+                    builder: (context, state) => const WeightScreen(),
+                  ),
+                ],
               ),
             ],
           ),

@@ -83,8 +83,25 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Collections introduced in later milestones (weight_logs) are added
-    // here incrementally as each feature is built, alongside their own
-    // rules-unit tests.
+    // weight_logs/{uid}_{loggedDate} — one entry per user per day.
+    // Owner-only, deterministic doc id. logWeight() writes a full set()
+    // (no merge), so create and update see the same full-document shape.
+    match /weight_logs/{docId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && docId == request.auth.uid + '_' + request.resource.data.loggedDate
+        && request.resource.data.weightKg is number
+        && request.resource.data.weightKg > 0
+        && request.resource.data.weightKg < 500;
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && docId == request.auth.uid + '_' + request.resource.data.loggedDate
+        && request.resource.data.weightKg is number
+        && request.resource.data.weightKg > 0
+        && request.resource.data.weightKg < 500;
+      allow delete: if false;
+    }
   }
 }
