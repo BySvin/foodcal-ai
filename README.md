@@ -17,7 +17,7 @@ This is the **V1 (MVP)** release. See [docs/architecture.md](docs/architecture.m
 
 ## Tech stack
 
-Flutter · Dart · Riverpod · Go Router · Material 3 · Firebase (Auth, Firestore, Storage, Analytics, Crashlytics) · fl_chart
+Flutter · Dart · Riverpod · Go Router · Material 3 · Firebase (Auth, Firestore, Analytics, Crashlytics) · fl_chart
 
 ## Prerequisites
 
@@ -53,7 +53,6 @@ In the [Firebase Console](https://console.firebase.google.com/) for your project
 
 1. **Authentication → Sign-in method** → enable **Email/Password**, and **Google** if you want that button working (it needs a support email set).
 2. **Firestore Database → Create database** → production mode, pick a region.
-3. **Storage → Get started** (needed for profile photo uploads; the app degrades gracefully with a clear error if this step is skipped).
 
 For Google Sign-In on Android, you'll also need to register your debug keystore's SHA-1 fingerprint:
 
@@ -67,7 +66,7 @@ Add the SHA-1 under **Project Settings → your Android app → Add fingerprint*
 
 ```bash
 firebase use your-project-id
-firebase deploy --only firestore:rules,firestore:indexes,storage
+firebase deploy --only firestore:rules,firestore:indexes
 ```
 
 ### 5. Seed the food catalog

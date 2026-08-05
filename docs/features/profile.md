@@ -2,27 +2,26 @@
 
 ## User Story
 
-As a user, I want to see and update my info and goals, change the app's theme, set a profile photo, and sign out — with any change to my goal clearly telling me what it'll do to my daily target before it takes effect.
+As a user, I want to see and update my info and goals, change the app's theme, and sign out — with any change to my goal clearly telling me what it'll do to my daily target before it takes effect.
 
 ## User Flow
 
-1. `/profile` shows avatar, name, email, current daily calorie target, a theme toggle, and links to edit profile / weight history / sign out.
-2. Tapping the avatar opens the device's photo picker; the selection uploads to Storage and updates the profile photo once done.
-3. "Edit profile & goal" (`/profile/edit`) opens a single-page form (name, age, height, weight, gender, activity level, goal) pre-filled with current values.
-4. Saving recomputes targets via the same `CalorieCalculator` used at onboarding. If the recomputed calorie target differs from the current one, a confirm dialog states the old → new value before anything is written — editing your weight or goal shouldn't silently change a number you're actively tracking against.
-5. Theme toggle (Light/Dark/System) applies immediately app-wide and persists to `settings/{uid}`.
-6. "Sign out" calls `AuthRepository.signOut()`; the router's redirect (already watching `authStateChangesProvider`) sends the user to `/login` automatically — no explicit navigation call needed.
+1. `/profile` shows avatar (from Google Sign-In, if used), name, email, current daily calorie target, a theme toggle, and links to edit profile / weight history / sign out.
+2. "Edit profile & goal" (`/profile/edit`) opens a single-page form (name, age, height, weight, gender, activity level, goal) pre-filled with current values.
+3. Saving recomputes targets via the same `CalorieCalculator` used at onboarding. If the recomputed calorie target differs from the current one, a confirm dialog states the old → new value before anything is written — editing your weight or goal shouldn't silently change a number you're actively tracking against.
+4. Theme toggle (Light/Dark/System) applies immediately app-wide and persists to `settings/{uid}`.
+5. "Sign out" calls `AuthRepository.signOut()`; the router's redirect (already watching `authStateChangesProvider`) sends the user to `/login` automatically — no explicit navigation call needed.
 
 ## Screen Layout
 
-- **Profile** (`/profile`): centered avatar (tap to change) + name + email, a card showing the daily target, the theme `SegmentedButton`, then stacked outlined buttons (Edit profile & goal, Weight history) and a text-button Sign out.
+- **Profile** (`/profile`): centered avatar (static — see Known Constraints) + name + email, a card showing the daily target, the theme `SegmentedButton`, then stacked outlined buttons (Edit profile & goal, Weight history) and a text-button Sign out.
 - **Edit profile** (`/profile/edit`): the same field/selector shapes as Onboarding but as one scrollable form rather than a stepper — editing is a correction, not a first-time guided flow.
 
 ## Flutter Widget Structure
 
 ```
 ProfileScreen (ConsumerWidget)
-  _AvatarPicker (ConsumerWidget — image_picker + upload)
+  _Avatar (static display only — no upload; see note below)
   _ThemeModeSelector (ConsumerWidget — SegmentedButton<ThemeMode>)
 
 ProfileEditScreen (ConsumerStatefulWidget)
@@ -36,14 +35,13 @@ ProfileEditScreen (ConsumerStatefulWidget)
 
 No new collections beyond what earlier milestones already declared:
 
-- `users/{uid}` — `ProfileController.updateProfile` writes the same fields Onboarding does (age, gender, heightCm, currentWeightKg, activityLevel, goal, dailyCalorieTarget, macroTargets, dailyWaterTargetMl) plus `displayName`; `photoUrl` is written separately by `uploadAvatar`.
+- `users/{uid}` — `ProfileController.updateProfile` writes the same fields Onboarding does (age, gender, heightCm, currentWeightKg, activityLevel, goal, dailyCalorieTarget, macroTargets, dailyWaterTargetMl) plus `displayName`. `photoUrl` is set only by Google Sign-In (from the Google account's profile photo) — there's no in-app upload path.
 - `settings/{uid}` — created in this milestone. Only `themeMode` has a V1 UI; `notificationsEnabled`/`weekStartsOn` stay documented-but-unwritten per `docs/architecture.md`'s original framing, rather than being written with placeholder values nothing reads yet.
-- Storage: `users/{uid}/profile.jpg`, matching the `storage.rules` path already written in the Foundation milestone (owner-only, <5MB, image content-type).
 
 ## Riverpod Providers
 
 - `settingsRepositoryProvider`, `appSettingsProvider` (`StreamProvider<AppSettings>`, defaults to `ThemeMode.system` both pre-sign-in and pre-first-change), `settingsControllerProvider` (`setThemeMode`).
-- `profileControllerProvider` (`AsyncNotifierProvider`) — `updateProfile(...)` (recompute + write), `uploadAvatar(bytes)`, `signOut()`.
+- `profileControllerProvider` (`AsyncNotifierProvider`) — `updateProfile(...)` (recompute + write), `signOut()`.
 - `App` (`lib/app.dart`) now watches `appSettingsProvider` for `MaterialApp.router`'s `themeMode`, replacing the previously hardcoded `ThemeMode.system`.
 
 ## Repository Structure
@@ -68,11 +66,11 @@ Same numeric ranges as Onboarding are implicitly enforced by `CalorieCalculator`
 
 ## Loading States
 
-`LoadingView` while the profile or edit form's underlying `appUserProvider` resolves; the avatar shows a spinner overlay mid-upload; the Save button shows its inline spinner while `profileControllerProvider` is in flight.
+`LoadingView` while the profile or edit form's underlying `appUserProvider` resolves; the Save button shows its inline spinner while `profileControllerProvider` is in flight.
 
 ## Error States
 
-`ErrorView` with retry for profile load failures; `SnackBar` for update/upload failures — including the expected case where Firebase Storage hasn't been enabled on the project yet (avatar upload fails gracefully with a clear message rather than crashing).
+`ErrorView` with retry for profile load failures; `SnackBar` for update failures.
 
 ## Empty States
 
@@ -86,8 +84,13 @@ Not applicable — profile fields are always populated post-onboarding.
 
 While building sign-out, found that several `StreamProvider`/`StreamProvider.family` bodies (`dailyFoodLogsProvider`, `recentFoodsProvider`, `favoritesProvider`, `dailyWaterProvider`, `weightLogsProvider`) read the current uid via `ref.watch(authRepositoryProvider).currentUid` — since `authRepositoryProvider`'s own value never changes, watching it doesn't make the *reading* of `.currentUid` reactive, so those providers would keep serving the previous user's cached Firestore stream after sign-out instead of resetting. Fixed by switching them to `ref.watch(authStateChangesProvider).valueOrNull?.uid`, the same reactive pattern `appUserProvider` already used correctly. Covered by a regression test (`food_log_providers_test.dart`) that signs a mock user out mid-test and asserts the same provider instance resets to empty rather than retaining the prior user's data — this is exactly the "no stale data flashes for the next user on shared devices" scenario called out in the plan for this milestone.
 
+## Known Constraints
+
+Avatar upload was dropped from V1 — Firebase Storage adds a second backend surface to secure and deploy for a single profile-photo field, and Google Sign-In already supplies `photoUrl` for the users who have one. `_Avatar` in `ProfileScreen` is a static display; there's no tap-to-change interaction, `firebase_storage`/`image_picker` aren't dependencies, and `storage.rules` doesn't exist.
+
 ## Future Extension Points
 
+- Avatar upload via Firebase Storage — the natural next place to reintroduce it if wanted later; would need `storage.rules` (owner-only, size/content-type limits) re-added and Storage enabled in the Firebase Console.
 - `/profile/water-settings` (a dedicated water-goal-only editor) — the route constant already exists in `RoutePaths`; V1 folds water goal editing into the general profile/goal edit instead of a separate screen.
 - `notificationsEnabled` / `weekStartsOn` UI — straightforward additions to `AppSettings` + `ProfileScreen` once push notifications or a calendar-week History view exist.
 - Account deletion / data export — not in V1's feature list; `users/{uid}`'s `allow delete: if false` rule would need to change deliberately if this is added later.

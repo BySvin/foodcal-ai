@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/option_selector.dart';
+import '../../../../core/widgets/success_animation.dart';
 import '../../../../routing/route_paths.dart';
 import '../../domain/entities/food_item.dart';
 import '../../domain/entities/food_log_entry.dart';
@@ -163,7 +164,8 @@ class _FoodQuantityScreenState extends ConsumerState<FoodQuantityScreen> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(failure.message)));
               } else {
-                context.go(RoutePaths.log);
+                await SuccessAnimation.show(context, message: '${food.name} logged');
+                if (context.mounted) context.go(RoutePaths.log);
               }
             },
           ),

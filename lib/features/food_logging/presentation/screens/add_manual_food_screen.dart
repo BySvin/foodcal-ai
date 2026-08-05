@@ -7,6 +7,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/option_selector.dart';
+import '../../../../core/widgets/success_animation.dart';
 import '../../../../routing/route_paths.dart';
 import '../../domain/entities/food_log_entry.dart';
 import '../providers/food_log_providers.dart';
@@ -67,7 +68,8 @@ class _AddManualFoodScreenState extends ConsumerState<AddManualFoodScreen> {
     if (failure != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(failure.message)));
     } else {
-      context.go(RoutePaths.log);
+      await SuccessAnimation.show(context, message: '${_nameController.text.trim()} logged');
+      if (mounted) context.go(RoutePaths.log);
     }
   }
 

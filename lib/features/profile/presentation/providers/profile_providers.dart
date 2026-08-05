@@ -1,14 +1,9 @@
-import 'dart:typed_data';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/utils/calorie_calculator.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
-
-final firebaseStorageProvider = Provider<FirebaseStorage>((ref) => FirebaseStorage.instance);
 
 final profileControllerProvider =
     AsyncNotifierProvider<ProfileController, void>(ProfileController.new);
@@ -68,31 +63,6 @@ class ProfileController extends AsyncNotifier<void> {
       state = AsyncError(failure, StackTrace.current);
       return failure;
     });
-  }
-
-  Future<Failure?> uploadAvatar(Uint8List bytes) async {
-    final uid = _uid;
-    if (uid == null) return const AuthFailure('You need to be signed in to do that.');
-
-    state = const AsyncLoading();
-    try {
-      final ref0 = ref.read(firebaseStorageProvider).ref('users/$uid/profile.jpg');
-      await ref0.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
-      final url = await ref0.getDownloadURL();
-
-      final result = await ref.read(userRepositoryProvider).updateUser(uid, {'photoUrl': url});
-      return result.fold((_) {
-        state = const AsyncData(null);
-        return null;
-      }, (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        return failure;
-      });
-    } catch (_) {
-      const failure = ServerFailure('Could not upload your photo. Please try again.');
-      state = const AsyncError(failure, StackTrace.empty);
-      return failure;
-    }
   }
 
   Future<void> signOut() async {

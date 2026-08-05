@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/error_view.dart';
@@ -35,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
             return ListView(
               padding: const EdgeInsets.all(AppSpacing.md),
               children: [
-                Center(child: _AvatarPicker(photoUrl: appUser.photoUrl)),
+                Center(child: _Avatar(photoUrl: appUser.photoUrl)),
                 const SizedBox(height: AppSpacing.md),
                 Center(
                   child: Text(appUser.displayName, style: Theme.of(context).textTheme.headlineLarge),
@@ -86,55 +83,25 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
-class _AvatarPicker extends ConsumerWidget {
-  const _AvatarPicker({required this.photoUrl});
+/// Static display only — no upload capability (V1 dropped Firebase Storage
+/// entirely, Firestore-only). Still shows a photo when one is present,
+/// since Google Sign-In populates `photoUrl` from the Google account
+/// automatically, independent of any Storage upload flow.
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.photoUrl});
 
   final String? photoUrl;
 
-  Future<void> _pickAndUpload(BuildContext context, WidgetRef ref) async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 512);
-    if (picked == null) return;
-
-    final Uint8List bytes = await picked.readAsBytes();
-    final failure = await ref.read(profileControllerProvider.notifier).uploadAvatar(bytes);
-    if (failure != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(failure.message)));
-    }
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = ref.watch(profileControllerProvider).isLoading;
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: isLoading ? null : () => _pickAndUpload(context, ref),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            radius: 48,
-            backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            backgroundImage: photoUrl != null
-                ? CachedNetworkImageProvider(photoUrl!)
-                : null,
-            child: photoUrl == null
-                ? Icon(Icons.person, size: 48, color: theme.colorScheme.onSurfaceVariant)
-                : null,
-          ),
-          if (isLoading) const CircularProgressIndicator(strokeWidth: 2.5),
-          if (!isLoading)
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: CircleAvatar(
-                radius: 14,
-                backgroundColor: theme.colorScheme.primary,
-                child: Icon(Icons.edit, size: 14, color: theme.colorScheme.onPrimary),
-              ),
-            ),
-        ],
-      ),
+    return CircleAvatar(
+      radius: 48,
+      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+      backgroundImage: photoUrl != null ? CachedNetworkImageProvider(photoUrl!) : null,
+      child: photoUrl == null
+          ? Icon(Icons.person, size: 48, color: theme.colorScheme.onSurfaceVariant)
+          : null,
     );
   }
 }
