@@ -63,8 +63,28 @@ service cloud.firestore {
       allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
-    // Collections introduced in later milestones (water_logs, weight_logs)
-    // are added here incrementally as each feature is built, alongside
-    // their own rules-unit tests.
+    // water_logs/{uid}_{date} — one aggregate doc per user per day.
+    // Owner-only, deterministic doc id enforced at the rules layer. Quick
+    // adds use a merge-set with FieldValue.increment, which Firestore
+    // resolves to a plain number before these rules run, so totalMl is
+    // always validated as the final numeric value either way.
+    match /water_logs/{docId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && docId == request.auth.uid + '_' + request.resource.data.date
+        && request.resource.data.totalMl is number
+        && request.resource.data.totalMl >= 0;
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.totalMl is number
+        && request.resource.data.totalMl >= 0;
+      allow delete: if false;
+    }
+
+    // Collections introduced in later milestones (weight_logs) are added
+    // here incrementally as each feature is built, alongside their own
+    // rules-unit tests.
   }
 }
