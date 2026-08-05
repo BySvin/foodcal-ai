@@ -6,7 +6,7 @@ A clean, minimalist calorie tracker built with Flutter and Firebase — fast foo
 
 ## About this project
 
-FoodCal AI is a portfolio project built end-to-end — architecture, Firebase backend, and UI design — to demonstrate a production-shaped Flutter app rather than a tutorial clone. It covers the full surface area of a real product: authentication, a multi-step onboarding flow that computes personalized calorie/macro targets, live-updating dashboards, food logging with search and favorites, water and weight tracking, a 30-day history view, and profile/settings.
+FoodCal AI is a solo portfolio project, built end-to-end by a final-year Diploma in Information Technology (Software Development) student — architecture, Firebase backend, and UI design all done independently — to demonstrate a production-shaped Flutter app rather than a tutorial clone. It covers the full surface area of a real product: authentication, a multi-step onboarding flow that computes personalized calorie/macro targets, live-updating dashboards, food logging with search and favorites, water and weight tracking, a 30-day history view, and profile/settings.
 
 A few things worth noting if you're reviewing the code:
 
