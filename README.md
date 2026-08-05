@@ -1,8 +1,22 @@
 # FoodCal AI
 
+**[Live demo →](https://foodcal-ai-app.web.app)**
+
 A clean, minimalist calorie tracker built with Flutter and Firebase — fast food logging, a Notion/Apple Health-inspired interface, Material 3, light & dark mode, on Android, iOS, and Web from a single codebase.
 
-This is the **V1 (MVP)** release. See [docs/architecture.md](docs/architecture.md) for the architecture overview and [docs/features/](docs/features/) for a per-feature breakdown (user story, data model, providers, states) of every feature listed below.
+## About this project
+
+FoodCal AI is a portfolio project built end-to-end — architecture, Firebase backend, and UI design — to demonstrate a production-shaped Flutter app rather than a tutorial clone. It covers the full surface area of a real product: authentication, a multi-step onboarding flow that computes personalized calorie/macro targets, live-updating dashboards, food logging with search and favorites, water and weight tracking, a 30-day history view, and profile/settings.
+
+A few things worth noting if you're reviewing the code:
+
+- **Feature-first clean architecture** — every feature is self-contained with its own `data`/`domain`/`presentation` layers (see [docs/architecture.md](docs/architecture.md)), and each one has a companion doc in [docs/features/](docs/features/) covering its data model, providers, and states in detail.
+- **Riverpod done reactively** — auth and profile state flow through `StreamProvider`s watched directly, not read once and cached, so the UI (including router redirects) updates immediately on sign-in/out rather than on next rebuild.
+- **Firestore modeled for atomicity, not just structure** — daily water/weight logs use deterministic `{uid}_{date}` document IDs so "log today" is a natural upsert, and quick-add water uses `FieldValue.increment` for race-free concurrent writes.
+- **85 tests, offline** — repository and widget tests run against `fake_cloud_firestore`/`firebase_auth_mocks`, no real Firebase project required to develop or CI against.
+- **A visual identity, not just Material defaults** — a gradient progress ring (the app's signature element, echoed in the app icon), a deliberate Inter/Space Grotesk type pairing, and orchestrated entrance motion on the dashboard.
+
+This is the **V1 (MVP)** release, deliberately scoped to exclude AI features, barcode scanning, push notifications, and payments — see [docs/architecture.md](docs/architecture.md) for the architecture overview.
 
 ## Features
 
@@ -13,7 +27,7 @@ This is the **V1 (MVP)** release. See [docs/architecture.md](docs/architecture.m
 - **Water Tracker** — one-tap quick-add against a daily goal, with one-step undo
 - **Weight Tracking** — daily log with a trend chart
 - **Daily History** — the last 30 days, with full per-day detail
-- **Profile & Settings** — edit info/goals, light/dark/system theme, avatar upload, sign out
+- **Profile & Settings** — edit info/goals, light/dark/system theme, sign out
 
 ## Tech stack
 
@@ -121,6 +135,8 @@ These were specific to the machine this project was originally built on — they
 - The Firestore Emulator requires a working `java` on `PATH`. If `firebase emulators:start` fails with a Java error, check `java -version` resolves to a real JDK — a stale/broken `PATH` entry pointing at a nonexistent install is a common cause on Windows.
 
 ## Deployment
+
+The live demo at [foodcal-ai-app.web.app](https://foodcal-ai-app.web.app) is deployed with:
 
 ```bash
 flutter build web --release

@@ -6,6 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/brand_mark.dart';
 import '../../../../routing/route_paths.dart';
 import '../providers/auth_providers.dart';
 
@@ -66,6 +67,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const Center(child: BrandMark(size: 48)),
+          const SizedBox(height: AppSpacing.lg),
           Text('Reset your password', style: Theme.of(context).textTheme.headlineLarge),
           const SizedBox(height: AppSpacing.sm),
           Text(

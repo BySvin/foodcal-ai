@@ -6,6 +6,7 @@ import '../../../../core/providers/date_providers.dart';
 import '../../../../core/widgets/date_nav_header.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_view.dart';
+import '../../../../core/widgets/staggered_fade_in.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../food_logging/presentation/providers/food_log_providers.dart';
 import '../../../water_tracker/presentation/widgets/water_tracker_card.dart';
@@ -74,7 +75,7 @@ class _DashboardBody extends ConsumerWidget {
           fatTarget: fatTarget,
         ),
         const SizedBox(height: AppSpacing.md),
-        WaterTrackerCard(date: date),
+        StaggeredFadeIn(index: 2, child: WaterTrackerCard(date: date)),
       ],
     );
   }

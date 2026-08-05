@@ -6,6 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/brand_mark.dart';
 import '../../../../routing/route_paths.dart';
 import '../providers/auth_providers.dart';
 import '../widgets/auth_text_field.dart';
@@ -65,6 +66,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    const Center(child: BrandMark()),
+                    const SizedBox(height: AppSpacing.lg),
                     Text('Welcome back', style: Theme.of(context).textTheme.headlineLarge),
                     const SizedBox(height: AppSpacing.sm),
                     Text(

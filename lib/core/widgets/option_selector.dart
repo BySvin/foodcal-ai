@@ -62,40 +62,53 @@ class _OptionCard<T> extends StatelessWidget {
     final backgroundColor =
         isSelected ? theme.colorScheme.primary.withValues(alpha: 0.08) : theme.colorScheme.surface;
 
-    return Material(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      curve: Curves.easeOut,
+      decoration: BoxDecoration(
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: isSelected ? 1.5 : 1),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(option.label, style: theme.textTheme.bodyMedium),
-                    if (option.description != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        option.description!,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+        border: Border.all(color: borderColor, width: isSelected ? 1.5 : 1),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(option.label, style: theme.textTheme.bodyMedium),
+                      if (option.description != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          option.description!,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              if (isSelected)
-                Icon(Icons.check_circle_rounded, color: theme.colorScheme.primary),
-            ],
+                AnimatedScale(
+                  duration: const Duration(milliseconds: 160),
+                  curve: Curves.easeOut,
+                  scale: isSelected ? 1 : 0.6,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 160),
+                    opacity: isSelected ? 1 : 0,
+                    child: Icon(Icons.check_circle_rounded, color: theme.colorScheme.primary),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

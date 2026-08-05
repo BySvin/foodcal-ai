@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_button.dart';
 
 /// Shared layout for each onboarding step: progress bar, title, content,
@@ -52,10 +53,23 @@ class OnboardingStepScaffold extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 6,
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                    child: Stack(
+                      children: [
+                        Container(height: 6, color: theme.colorScheme.surfaceContainerHighest),
+                        LayoutBuilder(
+                          builder: (context, constraints) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeOutCubic,
+                            height: 6,
+                            width: constraints.maxWidth * progress,
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.accent, AppColors.accentGradientEnd],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),

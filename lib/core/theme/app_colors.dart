@@ -7,6 +7,10 @@ class AppColors {
   const AppColors._();
 
   static const Color accent = Color(0xFF2F6FED);
+  // End color for the dashboard progress ring's gradient stroke — the app's
+  // one signature flourish. Violet-leaning so the sweep reads as deliberate
+  // warmth rather than a random second blue.
+  static const Color accentGradientEnd = Color(0xFF7C5CFC);
 
   static const Color proteinColor = Color(0xFFE0575B);
   static const Color carbsColor = Color(0xFFEAA83E);
