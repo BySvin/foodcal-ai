@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/providers/date_providers.dart';
-import '../../../../core/utils/date_utils.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/date_nav_header.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_view.dart';
 import '../../../../routing/route_paths.dart';
@@ -23,7 +23,7 @@ class LogScreen extends ConsumerWidget {
     final logsAsync = ref.watch(dailyFoodLogsProvider(date));
 
     return Scaffold(
-      appBar: AppBar(title: _DateHeader(date: date)),
+      appBar: AppBar(title: DateNavHeader(date: date)),
       body: SafeArea(
         child: logsAsync.when(
           loading: () => const LoadingView(),
@@ -34,35 +34,6 @@ class LogScreen extends ConsumerWidget {
           data: (logs) => _MealSectionList(date: date, logs: logs),
         ),
       ),
-    );
-  }
-}
-
-class _DateHeader extends ConsumerWidget {
-  const _DateHeader({required this.date});
-
-  final DateTime date;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isToday = AppDateUtils.isToday(date);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.chevron_left),
-          onPressed: () => ref.read(selectedDateProvider.notifier).state =
-              AppDateUtils.addDays(date, -1),
-        ),
-        Text(isToday ? 'Today' : '${date.month}/${date.day}/${date.year}'),
-        IconButton(
-          icon: const Icon(Icons.chevron_right),
-          onPressed: isToday
-              ? null
-              : () => ref.read(selectedDateProvider.notifier).state =
-                  AppDateUtils.addDays(date, 1),
-        ),
-      ],
     );
   }
 }
@@ -89,12 +60,14 @@ class _MealSectionList extends ConsumerWidget {
           MealSection(
             mealType: type,
             entries: byMeal[type]!,
-            onAddFood: () => context.push(RoutePaths.logSearch, extra: {
-              'mealType': type,
-              'date': date,
-            }),
+            onAddFood: () => context.push(
+              RoutePaths.logSearch,
+              extra: {'mealType': type, 'date': date},
+            ),
             onEditEntry: (entry) => _showEditSheet(context, ref, entry),
-            onDeleteEntry: (entry) => ref.read(foodLogControllerProvider.notifier).deleteLog(entry.id),
+            onDeleteEntry: (entry) => ref
+                .read(foodLogControllerProvider.notifier)
+                .deleteLog(entry.id),
           ),
           const SizedBox(height: AppSpacing.md),
         ],
@@ -139,7 +112,10 @@ class _EditQuantitySheetState extends ConsumerState<_EditQuantitySheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(widget.entry.foodName, style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            widget.entry.foodName,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: AppSpacing.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -180,8 +156,9 @@ class _EditQuantitySheetState extends ConsumerState<_EditQuantitySheet> {
                   .updateQuantity(widget.entry, _quantity);
               if (context.mounted) {
                 if (failure != null) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(failure.message)));
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(failure.message)));
                 } else {
                   Navigator.of(context).pop();
                 }
@@ -193,7 +170,9 @@ class _EditQuantitySheetState extends ConsumerState<_EditQuantitySheet> {
             label: 'Delete',
             variant: AppButtonVariant.text,
             onPressed: () async {
-              await ref.read(foodLogControllerProvider.notifier).deleteLog(widget.entry.id);
+              await ref
+                  .read(foodLogControllerProvider.notifier)
+                  .deleteLog(widget.entry.id);
               if (context.mounted) Navigator.of(context).pop();
             },
           ),
