@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/providers/firebase_providers.dart';
+import '../core/utils/date_utils.dart';
 import '../features/auth/presentation/providers/auth_providers.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
@@ -16,6 +17,7 @@ import '../features/food_logging/presentation/screens/add_manual_food_screen.dar
 import '../features/food_logging/presentation/screens/food_quantity_screen.dart';
 import '../features/food_logging/presentation/screens/food_search_screen.dart';
 import '../features/food_logging/presentation/screens/log_screen.dart';
+import '../features/history/presentation/screens/history_detail_screen.dart';
 import '../features/history/presentation/screens/history_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
@@ -146,6 +148,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePaths.history,
                 builder: (context, state) => const HistoryScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':date',
+                    builder: (context, state) {
+                      final dateParam = state.pathParameters['date']!;
+                      return HistoryDetailScreen(date: AppDateUtils.fromDayKey(dateParam));
+                    },
+                  ),
+                ],
               ),
             ],
           ),
