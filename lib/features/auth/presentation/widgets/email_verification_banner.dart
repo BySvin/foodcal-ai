@@ -48,6 +48,7 @@ class _EmailVerificationBannerState extends ConsumerState<EmailVerificationBanne
               ),
               IconButton(
                 icon: const Icon(Icons.close, size: 18),
+                tooltip: 'Dismiss',
                 onPressed: () => setState(() => _dismissed = true),
                 color: theme.colorScheme.onPrimaryContainer,
               ),

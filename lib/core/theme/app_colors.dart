@@ -17,7 +17,11 @@ class AppColors {
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightBorder = Color(0xFFE9E8E6);
   static const Color lightTextPrimary = Color(0xFF1F1F1E);
-  static const Color lightTextSecondary = Color(0xFF787774);
+  // Darkened from Notion's #787774 — that value is ~4.3:1 against
+  // lightBackground, just under WCAG AA's 4.5:1 for normal-size text
+  // (labelLarge/captions render at 13px, which doesn't qualify for the
+  // relaxed 3:1 "large text" threshold). This shade is ~4.9:1.
+  static const Color lightTextSecondary = Color(0xFF6E6E6B);
 
   static const Color darkBackground = Color(0xFF191919);
   static const Color darkSurface = Color(0xFF202020);

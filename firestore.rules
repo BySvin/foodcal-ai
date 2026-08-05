@@ -37,7 +37,16 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.resource.data.isCustom == true
         && request.resource.data.createdBy == request.auth.uid;
-      allow update, delete: if isSignedIn()
+      // Both the existing doc AND the incoming write must stay a custom
+      // food owned by the caller — otherwise an owner could flip isCustom
+      // to false or reassign createdBy on update, laundering a custom
+      // entry into looking like a seeded catalog item.
+      allow update: if isSignedIn()
+        && resource.data.isCustom == true
+        && resource.data.createdBy == request.auth.uid
+        && request.resource.data.isCustom == true
+        && request.resource.data.createdBy == request.auth.uid;
+      allow delete: if isSignedIn()
         && resource.data.isCustom == true
         && resource.data.createdBy == request.auth.uid;
     }
@@ -50,7 +59,15 @@ service cloud.firestore {
         && request.resource.data.calories is number
         && request.resource.data.calories >= 0
         && request.resource.data.mealType in ['breakfast', 'lunch', 'dinner', 'snack'];
-      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Quantity edits go through update — re-validate the same invariants
+      // so an edit can't reassign ownership or write bad data.
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.calories is number
+        && request.resource.data.calories >= 0
+        && request.resource.data.mealType in ['breakfast', 'lunch', 'dinner', 'snack'];
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
     // favorites/{uid}_{foodId} — owner-only, deterministic doc id enforced
@@ -58,6 +75,15 @@ service cloud.firestore {
     // from writing another user's favorite under a spoofed id.
     match /favorites/{favoriteId} {
       allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && favoriteId == request.auth.uid + '_' + request.resource.data.foodId;
+      // addFavorite() calls a plain (non-merge) set(), which Firestore
+      // evaluates as `update` when the doc already exists — e.g.
+      // re-favoriting an already-favorited food. Without this, that write
+      // is denied in production even though it passes against
+      // fake_cloud_firestore, which doesn't enforce rules at all.
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
         && request.resource.data.userId == request.auth.uid
         && favoriteId == request.auth.uid + '_' + request.resource.data.foodId;
       allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
@@ -78,6 +104,7 @@ service cloud.firestore {
       allow update: if isSignedIn()
         && resource.data.userId == request.auth.uid
         && request.resource.data.userId == request.auth.uid
+        && docId == request.auth.uid + '_' + request.resource.data.date
         && request.resource.data.totalMl is number
         && request.resource.data.totalMl >= 0;
       allow delete: if false;

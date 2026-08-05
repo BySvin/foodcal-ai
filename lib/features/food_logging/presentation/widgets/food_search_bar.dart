@@ -52,7 +52,7 @@ class _FoodSearchBarState extends State<FoodSearchBar> {
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _controller.text.isEmpty
             ? null
-            : IconButton(icon: const Icon(Icons.close), onPressed: _clear),
+            : IconButton(icon: const Icon(Icons.close), tooltip: 'Clear search', onPressed: _clear),
       ),
     );
   }

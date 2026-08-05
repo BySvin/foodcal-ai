@@ -1,17 +1,131 @@
-# food_calorie_tracker
+# FoodCal AI
 
-A new Flutter project.
+A clean, minimalist calorie tracker built with Flutter and Firebase — fast food logging, a Notion/Apple Health-inspired interface, Material 3, light & dark mode, on Android, iOS, and Web from a single codebase.
 
-## Getting Started
+This is the **V1 (MVP)** release. See [docs/architecture.md](docs/architecture.md) for the architecture overview and [docs/features/](docs/features/) for a per-feature breakdown (user story, data model, providers, states) of every feature listed below.
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- **Authentication** — email/password, Google Sign-In, password reset, email verification
+- **Onboarding** — a 6-step guided flow computing your daily calorie/macro/water targets (Mifflin-St Jeor)
+- **Dashboard** — calorie progress ring, macro bars, water card, all live-updating
+- **Food Logging** — catalog search, manual entries, favorites, recent foods, meal-sectioned log
+- **Water Tracker** — one-tap quick-add against a daily goal, with one-step undo
+- **Weight Tracking** — daily log with a trend chart
+- **Daily History** — the last 30 days, with full per-day detail
+- **Profile & Settings** — edit info/goals, light/dark/system theme, avatar upload, sign out
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Tech stack
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Flutter · Dart · Riverpod · Go Router · Material 3 · Firebase (Auth, Firestore, Storage, Analytics, Crashlytics) · fl_chart
+
+## Prerequisites
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.44+) and Dart 3.12+
+- [Firebase CLI](https://firebase.google.com/docs/cli) (`npm install -g firebase-tools`)
+- [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/) (`dart pub global activate flutterfire_cli`)
+- A Google account with access to the [Firebase Console](https://console.firebase.google.com/)
+- Node.js (only needed if you plan to re-seed the food catalog — see below)
+
+## Setup (fresh clone)
+
+### 1. Install dependencies
+
+```bash
+flutter pub get
+```
+
+### 2. Connect a Firebase project
+
+This app needs its own Firebase project — `lib/firebase_options.dart` in this repo is tied to the original project and won't work for a new clone until you regenerate it.
+
+```bash
+firebase login
+firebase projects:create your-project-id
+flutterfire configure --project=your-project-id
+```
+
+`flutterfire configure` will ask which platforms to set up (select Android, iOS, and Web) and will regenerate `lib/firebase_options.dart` plus drop `android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist` into place. These files are safe to commit — they're client config protected by Firebase Security Rules, not secrets.
+
+### 3. Enable Firebase services
+
+In the [Firebase Console](https://console.firebase.google.com/) for your project:
+
+1. **Authentication → Sign-in method** → enable **Email/Password**, and **Google** if you want that button working (it needs a support email set).
+2. **Firestore Database → Create database** → production mode, pick a region.
+3. **Storage → Get started** (needed for profile photo uploads; the app degrades gracefully with a clear error if this step is skipped).
+
+For Google Sign-In on Android, you'll also need to register your debug keystore's SHA-1 fingerprint:
+
+```bash
+keytool -list -v -keystore %USERPROFILE%\.android\debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+Add the SHA-1 under **Project Settings → your Android app → Add fingerprint**, then re-download `google-services.json` and replace the one in `android/app/`.
+
+### 4. Deploy security rules and indexes
+
+```bash
+firebase use your-project-id
+firebase deploy --only firestore:rules,firestore:indexes,storage
+```
+
+### 5. Seed the food catalog
+
+Food search returns nothing until the shared `foods` collection is populated:
+
+```bash
+cd tool/seed
+npm install
+```
+
+Download a service account key (Firebase Console → **Project Settings → Service Accounts → Generate new private key**) and save it as `tool/seed/serviceAccountKey.json` — this file is gitignored and must never be committed, it grants full database access.
+
+```bash
+node seedFoods.js
+```
+
+This seeds ~184 curated common foods. Re-running it is safe (each food has a stable id, so it upserts rather than duplicating).
+
+### 6. Run the app
+
+```bash
+flutter run              # pick a connected device/emulator
+flutter run -d chrome    # web
+```
+
+## Running tests
+
+```bash
+flutter analyze   # static analysis — should report no issues
+flutter test      # unit + widget tests
+```
+
+Tests use `fake_cloud_firestore` and `firebase_auth_mocks`, so they run fully offline without touching a real Firebase project.
+
+## Project structure
+
+Feature-first clean architecture — see [docs/architecture.md](docs/architecture.md) for the full rationale.
+
+```
+lib/
+├── core/           # theme, shared widgets, error types, pure utilities, base Firebase providers
+├── routing/        # Go Router config, auth/onboarding redirect guard, responsive shell
+└── features/       # one folder per feature, each with data/ domain/ presentation/
+```
+
+## Known environment notes
+
+These were specific to the machine this project was originally built on — they may not apply to yours, but are documented here in case they do:
+
+- If your Flutter SDK is installed under a path containing a space, `flutter test`'s native-assets build hook can fail (`objective_c` package, Java compile step). `pubspec.yaml` pins `path_provider_foundation` to 2.5.1 to sidestep this; see the comment there for details and how to remove the pin once it's no longer needed.
+- The Firestore Emulator requires a working `java` on `PATH`. If `firebase emulators:start` fails with a Java error, check `java -version` resolves to a real JDK — a stale/broken `PATH` entry pointing at a nonexistent install is a common cause on Windows.
+
+## Deployment
+
+```bash
+flutter build web --release
+firebase deploy --only hosting
+```
+
+See `firebase.json` for hosting config, and the Firebase Console's Analytics/Crashlytics dashboards once the app has real traffic.

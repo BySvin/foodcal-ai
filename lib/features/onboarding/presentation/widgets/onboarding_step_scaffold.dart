@@ -39,7 +39,7 @@ class OnboardingStepScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: onBack == null
             ? null
-            : IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack),
+            : IconButton(icon: const Icon(Icons.arrow_back), tooltip: 'Back', onPressed: onBack),
       ),
       body: SafeArea(
         child: Center(

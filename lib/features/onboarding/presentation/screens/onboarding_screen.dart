@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/calorie_calculator.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/error_view.dart';
+import '../../../../core/widgets/option_selector.dart';
 import '../providers/onboarding_providers.dart';
 import '../widgets/onboarding_step_scaffold.dart';
-import '../../../../core/widgets/option_selector.dart';
 
 const _stepCount = 6;
 
@@ -117,7 +118,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     return formAsync.when(
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(body: Center(child: Text('$error'))),
+      error: (error, _) => Scaffold(
+        body: ErrorView(
+          message: 'Could not load your onboarding progress.',
+          onRetry: () => ref.invalidate(onboardingControllerProvider),
+        ),
+      ),
       data: (form) {
         if (!_initializedName) {
           _nameController.text = form.name;

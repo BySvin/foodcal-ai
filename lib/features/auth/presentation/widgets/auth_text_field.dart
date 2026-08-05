@@ -38,6 +38,7 @@ class _PasswordFieldState extends State<PasswordField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       suffixIcon: IconButton(
         icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+        tooltip: _obscure ? 'Show password' : 'Hide password',
         onPressed: () => setState(() => _obscure = !_obscure),
       ),
     );

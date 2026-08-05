@@ -92,6 +92,7 @@ class _FoodQuantityScreenState extends ConsumerState<FoodQuantityScreen> {
               ),
               IconButton(
                 icon: Icon(isFavorite ? Icons.star_rounded : Icons.star_outline_rounded),
+                tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
                 color: isFavorite ? theme.colorScheme.primary : null,
                 onPressed: () => ref
                     .read(foodLogControllerProvider.notifier)
@@ -107,6 +108,7 @@ class _FoodQuantityScreenState extends ConsumerState<FoodQuantityScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.remove_circle_outline),
+                tooltip: 'Decrease quantity',
                 onPressed: _quantity > 1 ? () => setState(() => _quantity -= 1) : null,
               ),
               SizedBox(
@@ -115,6 +117,7 @@ class _FoodQuantityScreenState extends ConsumerState<FoodQuantityScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add_circle_outline),
+                tooltip: 'Increase quantity',
                 onPressed: () => setState(() => _quantity += 1),
               ),
             ],

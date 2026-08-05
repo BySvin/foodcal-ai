@@ -101,6 +101,7 @@ class FoodLogController extends AsyncNotifier<void> {
 
     return result.fold((_) {
       state = const AsyncData(null);
+      logAnalyticsEvent(ref, 'log_food', {'meal_type': mealType.name, 'source': source.name});
       return null;
     }, (failure) {
       state = AsyncError(failure, StackTrace.current);

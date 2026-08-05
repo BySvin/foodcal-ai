@@ -54,7 +54,10 @@ class WaterLogController extends AsyncNotifier<void> {
           amountMl: amountMl,
           goalMl: ref.read(waterGoalProvider),
         );
-    return result.fold((_) => null, (failure) => failure);
+    return result.fold((_) {
+      logAnalyticsEvent(ref, 'add_water', {'amount_ml': amountMl});
+      return null;
+    }, (failure) => failure);
   }
 
   Future<Failure?> undoLastAdd(DateTime date) async {

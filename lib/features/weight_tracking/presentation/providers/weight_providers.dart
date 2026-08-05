@@ -43,6 +43,7 @@ class WeightLogController extends AsyncNotifier<void> {
 
     return result.fold((_) {
       state = const AsyncData(null);
+      logAnalyticsEvent(ref, 'log_weight');
       return null;
     }, (failure) {
       state = AsyncError(failure, StackTrace.current);

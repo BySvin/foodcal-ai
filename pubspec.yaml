@@ -88,6 +88,7 @@ dev_dependencies:
   fake_cloud_firestore: ^3.1.0
   firebase_auth_mocks: ^0.14.1
   mock_exceptions: ^0.8.2
+  flutter_launcher_icons: ^0.14.3
 
 # path_provider_foundation 2.6.0+ pulls in the `objective_c` package, which
 # requires Dart's native-assets build hooks. Those hooks currently break on
@@ -99,6 +100,22 @@ dev_dependencies:
 # SDK is reinstalled to a space-free path or upstream fixes the quoting bug.
 dependency_overrides:
   path_provider_foundation: 2.5.1
+
+# Generates platform app icons from assets/icon/*.png — run via
+# `dart run flutter_launcher_icons` after changing the source images.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#2F6FED"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  web:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+    background_color: "#FAFAF9"
+    theme_color: "#2F6FED"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

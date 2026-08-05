@@ -20,12 +20,14 @@ class DateNavHeader extends ConsumerWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left),
+          tooltip: 'Previous day',
           onPressed: () => ref.read(selectedDateProvider.notifier).state =
               AppDateUtils.addDays(date, -1),
         ),
         Text(isToday ? 'Today' : '${date.month}/${date.day}/${date.year}'),
         IconButton(
           icon: const Icon(Icons.chevron_right),
+          tooltip: 'Next day',
           onPressed: isToday
               ? null
               : () => ref.read(selectedDateProvider.notifier).state =

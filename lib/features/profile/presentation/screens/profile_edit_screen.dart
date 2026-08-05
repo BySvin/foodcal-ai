@@ -6,6 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/calorie_calculator.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/option_selector.dart';
 import '../../../auth/domain/entities/app_user.dart';
@@ -136,7 +137,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       body: SafeArea(
         child: appUserAsync.when(
           loading: () => const LoadingView(),
-          error: (error, _) => Center(child: Text('$error')),
+          error: (error, _) => ErrorView(
+            message: 'Could not load your profile.',
+            onRetry: () => ref.invalidate(appUserProvider),
+          ),
           data: (appUser) {
             if (appUser == null) return const LoadingView();
             _initializeFrom(appUser);

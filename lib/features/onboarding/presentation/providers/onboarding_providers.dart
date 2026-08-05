@@ -127,6 +127,7 @@ class OnboardingController extends AsyncNotifier<OnboardingFormState> {
     return result.fold(
       (_) {
         state = AsyncData(form);
+        logAnalyticsEvent(ref, 'complete_onboarding', {'goal': _goalToString(form.goal!)});
         return null;
       },
       (failure) {
