@@ -21,5 +21,26 @@
     "firestore": { "port": 8080 },
     "storage": { "port": 9199 },
     "ui": { "enabled": true }
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "foodcal-ai-app",
+          "appId": "1:520578850983:android:155d38d15ca4f27d79fb82",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "foodcal-ai-app",
+          "configurations": {
+            "android": "1:520578850983:android:155d38d15ca4f27d79fb82",
+            "ios": "1:520578850983:ios:baf369011bb63b1e79fb82",
+            "web": "1:520578850983:web:538809505a10bb2c79fb82"
+          }
+        }
+      }
+    }
   }
 }

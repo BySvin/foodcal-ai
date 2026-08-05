@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "520578850983",
+    "project_id": "foodcal-ai-app",
+    "storage_bucket": "foodcal-ai-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520578850983:android:155d38d15ca4f27d79fb82",
+        "android_client_info": {
+          "package_name": "com.foodcalai.food_calorie_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520578850983-vf3lisfb50rnuqofrirnf3k6p1nus1dm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foodcalai.food_calorie_tracker",
+            "certificate_hash": "e0cfa4120ba67c7e38f1eda297b11a6052167f9d"
+          }
+        },
+        {
+          "client_id": "520578850983-1k7cithss642obc5ejf4f45m143d2bpn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg7YfyLjN8KcI-Jr4je3s5ZHYojc4mETU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520578850983-1k7cithss642obc5ejf4f45m143d2bpn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "520578850983-sfnle9h84r5l1r9plkbvmtop8v2g3a4i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.foodcalai.foodCalorieTracker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
